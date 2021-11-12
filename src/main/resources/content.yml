@@ -1,0 +1,22 @@
+content:
+  employeeStartDateFormat:
+    - yyyy-MM-dd
+    - dd-MMM-yy
+  salaryScale: 2
+  success:
+    employeeFileUploaded: Successfully processed
+    employeeCreated: Successfully created
+    employeeUpdated: Successfully updated
+    employeeDeleted: Successfully deleted
+  errors:
+    employeeNotFound: No such employee
+    employeeIdAlreadyExists: Employee ID already exists
+    employeeLoginNotUnique: Employee login not unique
+    genericInputInvalid: Invalid input
+    genericInputFieldInvalid: Invalid %s
+    invalidId: Invalid id
+    invalidLogin: Invalid login
+    invalidName: Invalid name
+    invalidSalary: Invalid salary
+    invalidDate: Invalid date
+    serverError: Internal server error

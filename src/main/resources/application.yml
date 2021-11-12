@@ -1,0 +1,17 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 128KB
+      max-request-size: 128KB
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc.batch_size: 30
+        order_inserts: true
+  jackson:
+    deserialization:
+      fail_on_null_for_primitives: true
+      use_big_decimal_for_floats: true
+    serialization:
+      write_bigdecimal_as_plain: true
