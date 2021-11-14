@@ -1,6 +1,6 @@
-package sg.therecursiveshepherd.crud.repositories;
+package sg.therecursiveshepherd.crud.repositories.employees.write;
 
-import org.springframework.data.domain.Pageable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -10,14 +10,12 @@ import sg.therecursiveshepherd.crud.entities.Employee;
 
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface EmployeesRepository extends JpaRepository<Employee, String> {
-
-  @Transactional(readOnly = true, timeout = 10)
-  List<Employee> findBySalaryGreaterThanEqualAndSalaryLessThan(BigDecimal minSalary, BigDecimal maxSalary, Pageable pageable);
+@Profile("write")
+public interface EmployeeWriteRepository extends JpaRepository<Employee, String> {
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "15000")})
@@ -28,5 +26,10 @@ public interface EmployeesRepository extends JpaRepository<Employee, String> {
   @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "15000")})
   @Transactional
   List<Employee> findByIdOrLogin(String id, String login);
+
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "15000")})
+  @Transactional
+  Optional<Employee> findByIdNotAndLogin(String id, String login);
 
 }

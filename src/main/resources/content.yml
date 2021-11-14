@@ -11,12 +11,9 @@ content:
   errors:
     employeeNotFound: No such employee
     employeeIdAlreadyExists: Employee ID already exists
+    employeeIdMismatch: Employee ID does not match request
     employeeLoginNotUnique: Employee login not unique
     genericInputInvalid: Invalid input
-    genericInputFieldInvalid: Invalid %s
-    invalidId: Invalid id
-    invalidLogin: Invalid login
-    invalidName: Invalid name
-    invalidSalary: Invalid salary
-    invalidDate: Invalid date
+    genericInputFieldInvalidTemplate: Invalid %s
+    methodNotAllowed: Unsupported operation
     serverError: Internal server error

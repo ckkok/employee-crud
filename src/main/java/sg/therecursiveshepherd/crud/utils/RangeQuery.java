@@ -4,7 +4,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public class RangeQuery implements Pageable {
 
@@ -19,10 +18,6 @@ public class RangeQuery implements Pageable {
     this.page = page;
     this.size = size == 0 ? Integer.MAX_VALUE : size;
     this.sort = sort;
-  }
-
-  public static RangeQuery of(int offset, int page, int size) {
-    return new RangeQuery(offset, page, size, Sort.unsorted());
   }
 
   public static RangeQuery of(int offset, int page, int size, Sort sort) {
@@ -60,28 +55,23 @@ public class RangeQuery implements Pageable {
   }
 
   @Override
-  public Sort getSortOr(Sort sort) {
-    return Pageable.super.getSortOr(sort);
-  }
-
-  @Override
   public Pageable next() {
-    return of(offset, page + 1, size);
+    return of(offset, page + 1, size, sort);
   }
 
   @Override
   public Pageable previousOrFirst() {
-    return hasPrevious() ? of(offset, page - 1, size) : first();
+    return hasPrevious() ? of(offset, page - 1, size, sort) : first();
   }
 
   @Override
   public Pageable first() {
-    return of(offset, 0, size);
+    return of(offset, 0, size, sort);
   }
 
   @Override
   public Pageable withPage(int pageNumber) {
-    return of(offset, pageNumber, size);
+    return of(offset, pageNumber, size, sort);
   }
 
   @Override
@@ -89,8 +79,4 @@ public class RangeQuery implements Pageable {
     return page > 0;
   }
 
-  @Override
-  public Optional<Pageable> toOptional() {
-    return Pageable.super.toOptional();
-  }
 }

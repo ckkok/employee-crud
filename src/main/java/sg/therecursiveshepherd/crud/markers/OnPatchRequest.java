@@ -1,0 +1,4 @@
+package sg.therecursiveshepherd.crud.markers;
+
+public interface OnPatchRequest {
+}

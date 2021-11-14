@@ -16,12 +16,14 @@ public class RequestTimingInterceptor implements HandlerInterceptor {
 
   private static final String REQUEST_START_TIME_ATTRIBUTE = "startTime";
 
+  @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
     log.info("Request ({}): {} {}", request.getRemoteAddr(), request.getMethod(), request.getRequestURI());
     request.setAttribute(REQUEST_START_TIME_ATTRIBUTE, Instant.now().toEpochMilli());
     return true;
   }
 
+  @Override
   public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
     long startTime = (long) request.getAttribute(REQUEST_START_TIME_ATTRIBUTE);
     long elapsedTime = Instant.now().toEpochMilli() - startTime;
