@@ -2,14 +2,19 @@ package sg.therecursiveshepherd.crud.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiResponseAllEmployeesDto {
+@EqualsAndHashCode
+public class ApiResponseAllEmployeesDto implements Serializable {
+
+  private static final long serialVersionUID = 2860156974367049740L;
 
   private List<EmployeeDto> results;
 

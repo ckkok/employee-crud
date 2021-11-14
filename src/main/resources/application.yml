@@ -1,12 +1,15 @@
 spring:
   servlet:
     multipart:
-      max-file-size: 128KB
-      max-request-size: 128KB
+      max-file-size: 61440KB
+      max-request-size: 61440KB
   jpa:
     open-in-view: false
+    hibernate:
+      ddl-auto: validate
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc.batch_size: 30
         order_inserts: true
   jackson:
@@ -15,3 +18,28 @@ spring:
       use_big_decimal_for_floats: true
     serialization:
       write_bigdecimal_as_plain: true
+
+read:
+  datasource:
+    jdbcUrl: jdbc:postgresql://localhost:5432/employeeapi
+    username: employeeapi
+    password: password123
+    connectionTimeout: 20000
+    idleTimeout: 600000
+    maxLifetime: 1800000
+    maximumPoolSize: 4
+    readOnly: true
+
+write:
+  datasource:
+    jdbcUrl: jdbc:postgresql://localhost:5432/employeeapi
+    username: employeeapi
+    password: password123
+    connectionTimeout: 20000
+    idleTimeout: 600000
+    maxLifetime: 1800000
+    maximumPoolSize: 4
+
+springfox:
+  documentation:
+    enabled: false

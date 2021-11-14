@@ -8,12 +8,11 @@ import sg.therecursiveshepherd.crud.configurations.Content;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Optional;
 
-public class BigDecimalTruncatedSerializer extends JsonSerializer<Optional<BigDecimal>> {
+public class BigDecimalTruncatedSerializer extends JsonSerializer<BigDecimal> {
   @Override
-  public void serialize(Optional<BigDecimal> bigDecimal, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-    var value = bigDecimal.map(b -> b.setScale(Content.SALARY_SCALE, RoundingMode.HALF_EVEN)).orElse(null);
+  public void serialize(BigDecimal bigDecimal, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+    var value = bigDecimal.setScale(Content.SALARY_SCALE, RoundingMode.HALF_UP);
     jsonGenerator.writeNumber(value);
   }
 }

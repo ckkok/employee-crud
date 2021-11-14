@@ -2,10 +2,12 @@ package sg.therecursiveshepherd.crud.dtos;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
+import sg.therecursiveshepherd.crud.annotations.NotAllNull;
+import sg.therecursiveshepherd.crud.markers.OnCreateRequest;
+import sg.therecursiveshepherd.crud.markers.OnPatchRequest;
+import sg.therecursiveshepherd.crud.markers.PrePatch;
 import sg.therecursiveshepherd.crud.utils.json.BigDecimalTruncatedSerializer;
 import sg.therecursiveshepherd.crud.utils.json.MultiDateFormatDeserializer;
 import sg.therecursiveshepherd.crud.utils.json.StringOnlyDeserializer;
@@ -13,48 +15,59 @@ import sg.therecursiveshepherd.crud.utils.json.StringOnlyDeserializer;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
-@Data
+import static sg.therecursiveshepherd.crud.dtos.EmployeeDto.*;
+
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Builder
-public class EmployeeDto {
+@NotAllNull(fieldNames = {FIELD_ID, FIELD_LOGIN, FIELD_NAME, FIELD_SALARY, FIELD_START_DATE}, groups = PrePatch.class)
+public class EmployeeDto implements Serializable {
 
-  public static final String FIELD_ID = "id";
-  public static final String FIELD_LOGIN = "login";
-  public static final String FIELD_NAME = "name";
-  public static final String FIELD_SALARY = "salary";
-  public static final String FIELD_START_DATE = "startDate";
+  private static final long serialVersionUID = 2501140544036862911L;
 
-  private static final String ERROR_INVALID_ID = "Invalid id";
-  private static final String ERROR_INVALID_LOGIN = "Invalid login";
-  private static final String ERROR_INVALID_NAME = "Invalid name";
-  private static final String ERROR_INVALID_SALARY = "Invalid salary";
-  private static final String ERROR_INVALID_DATE = "Invalid date";
+  public static final transient String FIELD_ID = "id";
+  public static final transient String FIELD_LOGIN = "login";
+  public static final transient String FIELD_NAME = "name";
+  public static final transient String FIELD_SALARY = "salary";
+  public static final transient String FIELD_START_DATE = "startDate";
 
-  private static final String MINIMUM_SALARY_ALLOWED = "0.0";
+  private static final transient String ERROR_INVALID_ID = "{dto.employee.invalidId}";
+  private static final transient String ERROR_INVALID_LOGIN = "{dto.employee.invalidLogin}";
+  private static final transient String ERROR_INVALID_NAME = "{dto.employee.invalidName}";
+  private static final transient String ERROR_INVALID_SALARY = "{dto.employee.invalidSalary}";
+  private static final transient String ERROR_INVALID_DATE = "{dto.employee.invalidStartDate}";
 
-  @NotNull(message = ERROR_INVALID_ID)
+  private static final transient String MINIMUM_SALARY_ALLOWED = "0.0";
+
+  @NotBlank(message = ERROR_INVALID_ID, groups = OnCreateRequest.class)
+  @Length(min = 1, groups = OnPatchRequest.class)
   @JsonDeserialize(using = StringOnlyDeserializer.class)
-  private Optional<@NotBlank(message = ERROR_INVALID_ID) String> id;
+  private String id;
 
-  @NotNull(message = ERROR_INVALID_LOGIN)
+  @NotBlank(message = ERROR_INVALID_LOGIN, groups = OnCreateRequest.class)
+  @Length(min = 1, groups = OnPatchRequest.class)
   @JsonDeserialize(using = StringOnlyDeserializer.class)
-  private Optional<@NotBlank(message = ERROR_INVALID_LOGIN) String> login;
+  private String login;
 
-  @NotNull(message = ERROR_INVALID_NAME)
+  @NotBlank(message = ERROR_INVALID_NAME, groups = OnCreateRequest.class)
+  @Length(min = 1, groups = OnPatchRequest.class)
   @JsonDeserialize(using = StringOnlyDeserializer.class)
-  private Optional<@NotBlank(message = ERROR_INVALID_NAME) String> name;
+  private String name;
 
-  @NotNull(message = ERROR_INVALID_SALARY)
+  @NotNull(message = ERROR_INVALID_SALARY, groups = OnCreateRequest.class)
+  @DecimalMin(value = MINIMUM_SALARY_ALLOWED, message = ERROR_INVALID_SALARY, groups = {OnCreateRequest.class, OnPatchRequest.class})
   @JsonSerialize(using = BigDecimalTruncatedSerializer.class)
-  private Optional<@DecimalMin(value = MINIMUM_SALARY_ALLOWED, message = ERROR_INVALID_SALARY) BigDecimal> salary;
+  private BigDecimal salary;
 
-  @NotNull(message = ERROR_INVALID_DATE)
+  @NotNull(message = ERROR_INVALID_DATE, groups = OnCreateRequest.class)
   @JsonDeserialize(using = MultiDateFormatDeserializer.class)
-  private Optional<LocalDate> startDate;
+  private LocalDate startDate;
 
 }

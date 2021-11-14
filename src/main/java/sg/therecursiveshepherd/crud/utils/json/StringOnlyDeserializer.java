@@ -1,28 +1,28 @@
 package sg.therecursiveshepherd.crud.utils.json;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 
 import java.io.IOException;
-import java.util.Optional;
 
-public class StringOnlyDeserializer extends StdDeserializer<Optional<String>> {
+public class StringOnlyDeserializer extends StdDeserializer<String> {
 
   private static final long serialVersionUID = -8308645837880778327L;
 
   public StringOnlyDeserializer() {
-    super(Optional.class);
+    super(String.class);
   }
 
   @Override
-  public Optional<String> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+  public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
     var token = p.currentToken();
     if (token.isBoolean() || token.isNumeric() || !token.toString().equalsIgnoreCase("value_string")) {
-      ctxt.reportWrongTokenException(String.class, token, "Not a string");
-      return Optional.empty();
+      ctxt.reportWrongTokenException(String.class, JsonToken.VALUE_STRING, "Received " + token.asString());
+      return null;
     }
-    return Optional.of(StringDeserializer.instance.deserialize(p, ctxt));
+    return StringDeserializer.instance.deserialize(p, ctxt);
   }
 }

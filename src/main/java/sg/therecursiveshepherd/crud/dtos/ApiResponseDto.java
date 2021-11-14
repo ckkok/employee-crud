@@ -2,13 +2,15 @@ package sg.therecursiveshepherd.crud.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApiResponseDto {
+@EqualsAndHashCode
+public class ApiResponseDto<T> {
 
-  private String message;
+  private T message;
 
 }
