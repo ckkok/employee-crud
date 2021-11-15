@@ -8,6 +8,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -38,6 +41,34 @@ public class Employee {
   public static final String COLUMN_VERSION = "version";
   public static final String COLUMN_CREATED_DATETIME = "created_datetime";
   public static final String COLUMN_LAST_UPDATED_DATETIME = "last_updated_datetime";
+
+  @AllArgsConstructor
+  @Getter
+  public enum FieldName {
+    ID(FIELD_ID, COLUMN_ID),
+    LOGIN(FIELD_LOGIN, COLUMN_LOGIN),
+    NAME(FIELD_NAME, COLUMN_NAME),
+    SALARY(FIELD_SALARY, COLUMN_SALARY),
+    STARTDATE(FIELD_START_DATE, COLUMN_START_DATE);
+
+    private final String dtoFieldName;
+    private final String dbColumnName;
+
+    private static final String ERROR_TEMPLATE;
+
+    static {
+      ERROR_TEMPLATE = "Invalid value '%s' for employee field name given. Has to be one of " +
+        Arrays.stream(FieldName.values()).map(f -> f.name().toLowerCase(Locale.US)).collect(Collectors.joining(", "));
+    }
+
+    public static FieldName fromString(String value) {
+      try {
+        return FieldName.valueOf(value.toUpperCase(Locale.US));
+      } catch (Exception e) {
+        throw new IllegalArgumentException(String.format(ERROR_TEMPLATE, value), e);
+      }
+    }
+  }
 
   @Version
   @Column(nullable = false, name = COLUMN_VERSION)

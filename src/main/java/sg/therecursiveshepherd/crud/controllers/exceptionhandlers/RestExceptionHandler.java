@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 import sg.therecursiveshepherd.crud.configurations.Content;
 import sg.therecursiveshepherd.crud.dtos.ApiResponseDto;
@@ -23,6 +24,12 @@ import java.util.List;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
 public class RestExceptionHandler {
+
+  @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+  ResponseEntity<ApiResponseDto<String>> onMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+    var response = new ApiResponseDto<>(String.format(Content.ERROR_INVALID_FIELD_TEMPLATE, exception.getParameter().getParameterName()));
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
 
   @ExceptionHandler({ConstraintViolationException.class})
   ResponseEntity<ApiResponseDto<String>> onConstraintViolationException(ConstraintViolationException exception) {
