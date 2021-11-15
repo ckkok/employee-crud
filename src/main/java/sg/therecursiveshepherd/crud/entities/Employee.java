@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static sg.therecursiveshepherd.crud.entities.Employee.COLUMN_NAME;
+import static sg.therecursiveshepherd.crud.entities.Employee.INDEX_NAME;
+
 @Entity
 @Getter
 @Setter
@@ -20,8 +23,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-@Table(name = "employee", uniqueConstraints = {
-  @UniqueConstraint(name = Employee.CONSTRAINT_LOGIN, columnNames = {Employee.COLUMN_LOGIN})
+@Table(name = "employee", indexes = {@Index(columnList = COLUMN_NAME, name = INDEX_NAME)},
+  uniqueConstraints = {@UniqueConstraint(name = Employee.CONSTRAINT_LOGIN, columnNames = {Employee.COLUMN_LOGIN})
 })
 public class Employee {
 
@@ -32,6 +35,7 @@ public class Employee {
   public static final String FIELD_START_DATE = "startDate";
 
   public static final String CONSTRAINT_LOGIN = "uniquelogin";
+  public static final String INDEX_NAME = "idx_name";
 
   public static final String COLUMN_ID = "id";
   public static final String COLUMN_LOGIN = "login";

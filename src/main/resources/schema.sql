@@ -10,3 +10,4 @@ CREATE TABLE public.employee (
 );
 ALTER TABLE ONLY public.employee ADD CONSTRAINT employee_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY public.employee ADD CONSTRAINT uniquelogin UNIQUE (login);
+CREATE INDEX idx_name ON public.employee USING btree (name);

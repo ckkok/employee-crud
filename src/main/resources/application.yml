@@ -5,6 +5,7 @@ spring:
       max-request-size: 61440KB
   jpa:
     open-in-view: false
+    generate-ddl: false
     hibernate:
       ddl-auto: validate
     properties:

@@ -99,7 +99,8 @@ class EmployeeCsvFileUploadTest {
     "sample_data_duplicate_login_in_db.csv,Employee login not unique",
     "sample_data_invalid_date_format.csv,Row 1: Invalid date",
     "sample_data_missing_data_in_row.csv,Row 1: Invalid name",
-    "sample_data_negative_salary.csv,Row 1: Invalid salary"
+    "sample_data_negative_salary.csv,Row 1: Invalid salary",
+    "sample_data_with_spaces.csv,Row 1: Invalid login"
   })
   void uploadingCsvWithInvalidRowsReturnsStatus400(String fileName, String responseMessage) throws Exception {
     var employeesBefore = employeeWriteRepository.findAll();
