@@ -10,7 +10,7 @@ Run `mvn clean verify` to build, test, and scan the application. This results in
 
 - `target/crud-{version}.jar`: The application itself. "{version}" in the filename is replaced by the application version from pom.xml.
 - `target/site/jacoco/index.html`: Code coverage report. View this in a browser.
-- `target/dependency-check-report.html`: OWASP Dependency Checker report. As part of the build process, the dependency checker downloads and caches the NIST Vulnerability Database locally and checks the application's dependencies against it. CVEs related to dependencies will show up here.
+- `target/dependency-check-report.html`: OWASP Dependency Checker report. As part of the build process, the dependency checker downloads and caches the NIST Vulnerability Database locally and checks the application's dependencies against it. **When the application is first built, this is expected to take several minutes.** CVEs related to dependencies will show up here.
 
 Should a SonarQube server be available, edit `sonarscan.bat` with the host url, project key, and token. Run it to trigger the code analysis.
 
