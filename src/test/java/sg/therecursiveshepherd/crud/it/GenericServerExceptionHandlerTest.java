@@ -46,8 +46,8 @@ class GenericServerExceptionHandlerTest {
     var mockRepository = Mockito.mock(EmployeeReadRepository.class);
     ReflectionTestUtils.setField(employeeReadService, "employeeReadRepository", mockRepository);
     Mockito.when(mockRepository.findBySalaryGreaterThanEqualAndSalaryLessThan(Mockito.any(), Mockito.any(), Mockito.any())).thenThrow(RuntimeException.class);
+    Mockito.when(mockRepository.findBySalaryGreaterThanEqualAndSalaryLessThanAndStartDateGreaterThanEqualAndStartDateLessThan(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenThrow(RuntimeException.class);
     var response = mockMvc.perform(get("/users"))
-      .andDo(print())
       .andExpect(status().isInternalServerError())
       .andReturn()
       .getResponse();
@@ -60,7 +60,6 @@ class GenericServerExceptionHandlerTest {
   @DisplayName("Unsupported operation message is shown for calling endpoints with unsupported operation")
   void unsupportedOperationMessageShownForCallingUnsupportedActionOnEndpoints() throws Exception {
     var response = mockMvc.perform(post("/users"))
-      .andDo(print())
       .andExpect(status().isMethodNotAllowed())
       .andReturn()
       .getResponse();

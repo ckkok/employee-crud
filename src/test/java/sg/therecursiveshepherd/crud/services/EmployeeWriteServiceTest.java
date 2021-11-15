@@ -7,7 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.EmptyResultDataAccessException;
-import sg.therecursiveshepherd.crud.configurations.BeanConfig;
+import sg.therecursiveshepherd.crud.configurations.ApplicationConfiguration;
 import sg.therecursiveshepherd.crud.dtos.EmployeeDto;
 import sg.therecursiveshepherd.crud.entities.Employee;
 import sg.therecursiveshepherd.crud.exceptions.EmployeeIdAlreadyExistsException;
@@ -43,7 +43,7 @@ class EmployeeWriteServiceTest {
     var employeeMapper = new EmployeeMapper();
     var validator = Validation.buildDefaultValidatorFactory().getValidator();
     var employeeCustomValidator = new EmployeeCustomValidator(validator);
-    var employeeCsvMapper = new BeanConfig().employeeCsvMapper();
+    var employeeCsvMapper = new ApplicationConfiguration().employeeCsvMapper();
     employeeWriteService = new EmployeeWriteService(employeeCsvMapper, employeeCustomValidator, employeeWriteRepository, employeeMapper);
   }
 

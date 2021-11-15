@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Sort;
+import sg.therecursiveshepherd.crud.dtos.EmployeeQuerySpecDto;
 import sg.therecursiveshepherd.crud.entities.Employee;
 import sg.therecursiveshepherd.crud.repositories.employees.read.EmployeeReadRepository;
 import sg.therecursiveshepherd.crud.services.mappers.EmployeeMapper;
@@ -31,40 +32,23 @@ class EmployeeReadServiceTest {
   void setup() {
     MockitoAnnotations.openMocks(this);
     var employeeMapper = new EmployeeMapper();
-    employeeReadService = new EmployeeReadService(employeeReadRepository, employeeMapper);
-  }
-
-  @Test
-  @DisplayName("Given null minSalary, findAllEmployees defaults to 0.0 minSalary")
-  void givenNullMinSalaryFindAllEmployeesUsesDefaultOfZero() {
-    var captor = ArgumentCaptor.forClass(BigDecimal.class);
-    when(employeeReadRepository.findBySalaryGreaterThanEqualAndSalaryLessThan(any(BigDecimal.class), any(BigDecimal.class), any()))
-      .thenReturn(Collections.emptyList());
-    employeeReadService.findAllEmployees(null, null, 0, 0);
-    verify(employeeReadRepository).findBySalaryGreaterThanEqualAndSalaryLessThan(captor.capture(), any(BigDecimal.class), any());
-    assertEquals(BigDecimal.ZERO, captor.getValue());
-  }
-
-  @Test
-  @DisplayName("Given null maxSalary, findAllEmployees defaults to Double.MAX_VALUE maxSalary")
-  void givenNullMaxSalaryFindAllEmployeesUsesDefaultOfMaxDouble() {
-    var captor = ArgumentCaptor.forClass(BigDecimal.class);
-    when(employeeReadRepository.findBySalaryGreaterThanEqualAndSalaryLessThan(any(BigDecimal.class), any(BigDecimal.class), any()))
-      .thenReturn(Collections.emptyList());
-    employeeReadService.findAllEmployees(null, null, 0, 0);
-    verify(employeeReadRepository).findBySalaryGreaterThanEqualAndSalaryLessThan(any(BigDecimal.class), captor.capture(), any());
-    assertEquals(BigDecimal.valueOf(Double.MAX_VALUE), captor.getValue());
+    var defaultSortOrderForEmployees = Sort.Order.asc(Employee.FieldName.ID.getDbColumnName());
+    employeeReadService = new EmployeeReadService(employeeReadRepository, employeeMapper, defaultSortOrderForEmployees);
   }
 
   @Test
   @DisplayName("Given offset and limit, findAllEmployees invokes the repository method with the same offset and limit and with page 0")
   void givenOffsetAndLimitFindAllEmployeesCallsRepositoryMethodWithThem() {
+    var querySpecDto = EmployeeQuerySpecDto.builder()
+      .login(null).name(null)
+      .dateRangeQuery(new EmployeeQuerySpecDto.DateRangeQuery(null, null))
+      .salaryRangeQuery(new EmployeeQuerySpecDto.SalaryRangeQuery(null, null))
+      .build();
     var argCaptor = ArgumentCaptor.forClass(RangeQuery.class);
-    when(employeeReadRepository.findBySalaryGreaterThanEqualAndSalaryLessThan(any(BigDecimal.class), any(BigDecimal.class), any()))
+    when(employeeReadRepository.findBySalaryGreaterThanEqualAndSalaryLessThanAndStartDateGreaterThanEqualAndStartDateLessThan(any(BigDecimal.class), any(BigDecimal.class), any(LocalDate.class), any(LocalDate.class), any()))
       .thenReturn(Collections.emptyList());
-    employeeReadService.findAllEmployees(null, null, 1, 2);
-    verify(employeeReadRepository).findBySalaryGreaterThanEqualAndSalaryLessThan(
-      any(BigDecimal.class), any(BigDecimal.class), argCaptor.capture());
+    employeeReadService.findAllEmployees(querySpecDto, 1, 2, null, null);
+    verify(employeeReadRepository).findBySalaryGreaterThanEqualAndSalaryLessThanAndStartDateGreaterThanEqualAndStartDateLessThan(nullable(BigDecimal.class), nullable(BigDecimal.class), nullable(LocalDate.class), nullable(LocalDate.class), argCaptor.capture());
     var rangeQuery = argCaptor.getValue();
     assertEquals(1, rangeQuery.getOffset());
     assertEquals(0, rangeQuery.getPageNumber());
@@ -72,14 +56,18 @@ class EmployeeReadServiceTest {
   }
 
   @Test
-  @DisplayName("Given no sort parameter, findAllEmployees sorts by id ascending")
+  @DisplayName("Given no sort parameter, findAllEmployeesBySalary sorts by id ascending")
   void givenNoSortParameterFindAllEmployeesSortsByIdAscending() {
+    var querySpecDto = EmployeeQuerySpecDto.builder()
+      .login(null).name(null)
+      .dateRangeQuery(new EmployeeQuerySpecDto.DateRangeQuery(null, null))
+      .salaryRangeQuery(new EmployeeQuerySpecDto.SalaryRangeQuery(null, null))
+      .build();
     var argCaptor = ArgumentCaptor.forClass(RangeQuery.class);
-    when(employeeReadRepository.findBySalaryGreaterThanEqualAndSalaryLessThan(any(BigDecimal.class), any(BigDecimal.class), any()))
+    when(employeeReadRepository.findBySalaryGreaterThanEqualAndSalaryLessThanAndStartDateGreaterThanEqualAndStartDateLessThan(any(BigDecimal.class), any(BigDecimal.class), any(LocalDate.class), any(LocalDate.class), any()))
       .thenReturn(Collections.emptyList());
-    employeeReadService.findAllEmployees(null, null, 0, 0);
-    verify(employeeReadRepository).findBySalaryGreaterThanEqualAndSalaryLessThan(
-      any(BigDecimal.class), any(BigDecimal.class), argCaptor.capture());
+    employeeReadService.findAllEmployees(querySpecDto, 0, 0, null, null);
+    verify(employeeReadRepository).findBySalaryGreaterThanEqualAndSalaryLessThanAndStartDateGreaterThanEqualAndStartDateLessThan(nullable(BigDecimal.class), nullable(BigDecimal.class), nullable(LocalDate.class), nullable(LocalDate.class), argCaptor.capture());
     var sortOrders = argCaptor.getValue().getSort().toList();
     assertEquals(1, sortOrders.size());
     assertEquals(Sort.Direction.ASC, sortOrders.get(0).getDirection());
