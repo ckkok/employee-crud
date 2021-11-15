@@ -71,20 +71,22 @@ public class EmployeeWriteService {
   @Retryable(value = {TransientDataAccessException.class}, maxAttempts = 2, backoff = @Backoff(delay = 1000L, maxDelay = 3000L))
   public void createEmployee(EmployeeDto dto) {
     validateNoExistingIdOrLogin(dto);
-    var employeeEntity = employeeMapper.toEntity(dto);
-    employeeWriteRepository.save(employeeEntity);
+    saveEmployeeDto(dto, null);
   }
 
   @Transactional
   @Retryable(value = {TransientDataAccessException.class}, maxAttempts = 2, backoff = @Backoff(delay = 1000L, maxDelay = 3000L))
-  public void replaceEmployeeById(String id, EmployeeDto dto) {
+  public boolean replaceEmployeeById(String id, EmployeeDto dto) {
     if (!Objects.equals(id, dto.getId())) {
       throw new EmployeeIdMismatchException();
     }
-    var existingRecord = employeeWriteRepository.findById(id).orElseThrow(EmployeeNotFoundException::new);
-    var updatedRecord = employeeMapper.toEntity(dto, existingRecord);
-    employeeWriteRepository.save(updatedRecord);
+    var existingRecord = employeeWriteRepository.findById(id);
+    var isExistingRecord = existingRecord.isPresent();
+    saveEmployeeDto(dto, existingRecord.orElse(null));
+    return !isExistingRecord;
   }
+
+
 
   @Transactional
   @Retryable(value = {TransientDataAccessException.class}, maxAttempts = 2, backoff = @Backoff(delay = 1000L, maxDelay = 3000L))
@@ -181,4 +183,8 @@ public class EmployeeWriteService {
     }
   }
 
+  private void saveEmployeeDto(EmployeeDto dto, Employee existingEntity) {
+    var employeeEntity = employeeMapper.toEntity(dto, existingEntity);
+    employeeWriteRepository.save(employeeEntity);
+  }
 }

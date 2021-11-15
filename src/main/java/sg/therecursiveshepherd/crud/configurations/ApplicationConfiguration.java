@@ -2,6 +2,7 @@ package sg.therecursiveshepherd.crud.configurations;
 
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -50,10 +51,11 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     var schema = CsvSchema.emptySchema()
       .withComments()
       .withHeader();
-    var csvMapper = new CsvMapper()
+    var csvMapper = (CsvMapper) new CsvMapper()
       .registerModule(new Jdk8Module())
       .registerModule(new ParameterNamesModule())
       .registerModule(new JavaTimeModule());
+    csvMapper.enable(CsvParser.Feature.TRIM_SPACES);
     return csvMapper.readerFor(EmployeeDto.class)
       .with(schema);
   }

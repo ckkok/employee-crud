@@ -4,6 +4,7 @@ spring:
       mode: always
   jpa:
     show-sql: true
+    generate-ddl: true
     hibernate:
       ddl-auto: create
     properties:

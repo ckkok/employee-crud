@@ -141,12 +141,12 @@ class EmployeeWriteServiceTest {
   }
 
   @Test
-  @DisplayName("Given path id that does not exist in database, replaceEmployeeById throws EmployeeNotFoundException")
-  void givenPathIdNotExistingInDatabaseReplaceEmployeeByIdThrowsEmployeeNotFoundException() {
+  @DisplayName("Given path id that does not exist in database, replaceEmployeeById returns true")
+  void givenPathIdNotExistingInDatabaseReplaceEmployeeByIdReturnsTrue() {
     var testId = "testId";
     var dto = getTestDto();
     when(employeeWriteRepository.findById(testId)).thenReturn(Optional.empty());
-    assertThrows(EmployeeNotFoundException.class, () -> employeeWriteService.replaceEmployeeById(testId, dto));
+    assertTrue(employeeWriteService.replaceEmployeeById(testId, dto));
   }
 
   @Test

@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -57,18 +58,21 @@ class EmployeeUpdateTest {
     employeeWriteRepository.deleteAll();
   }
 
-  @Test
-  @DisplayName("/users/{id}: Responds to PUT requests with status 200 given valid request body")
-  void updateUserReturnsStatus200OnSuccess() throws Exception {
+  @ParameterizedTest(name = "{index}: Id {0}")
+  @DisplayName("/users/{id}: Responds to PUT requests with status 200 given valid request body and id")
+  @CsvSource({
+    "e0001", "e0099"
+  })
+  void updateUserReturnsStatus200OnSuccess(String id) throws Exception {
     var json = "{\n" +
-      "  \"id\": \"e0001\",\n" +
+      "  \"id\": \"" + id + "\",\n" +
       "  \"login\": \"testuser\",\n" +
       "  \"name\": \"testname\",\n" +
       "  \"salary\": 100.00,\n" +
       "  \"startDate\": \"11-Nov-11\"\n" +
       "}";
     var response = mockMvc.perform(
-        put("/users/e0001")
+        put("/users/" + id)
           .contentType(MediaType.APPLICATION_JSON)
           .content(json))
       .andExpect(status().isOk())
@@ -76,8 +80,8 @@ class EmployeeUpdateTest {
       .getResponse();
     var responseDto = objectMapper.readValue(response.getContentAsString(), ApiResponseDto.class);
     assertEquals("Successfully updated", responseDto.getMessage());
-    var employee = employeeWriteRepository.findById("e0001").orElseThrow(NullPointerException::new);
-    assertEquals("e0001", employee.getId());
+    var employee = employeeWriteRepository.findById(id).orElseThrow(NullPointerException::new);
+    assertEquals(id, employee.getId());
     assertEquals("testuser", employee.getLogin());
     assertEquals("testname", employee.getName());
     assertEquals(0, BigDecimal.valueOf(100.00).compareTo(employee.getSalary()));
@@ -372,6 +376,26 @@ class EmployeeUpdateTest {
     assertEquals("Successfully updated", responseDto.getMessage());
     var employee = employeeWriteRepository.findById("e0001").get();
     assertEquals(0, employee.getSalary().compareTo(BigDecimal.valueOf(100.00)));
+  }
+
+  @Test
+  @DisplayName("/users/{id}: Responds to PATCH requests with status 400 given id not in database")
+  void updateUserReturnsStatus400ForPatchGivenIdNotInDatabase() throws Exception {
+    var json = "{\n" +
+      "  \"id\": \"e0091\",\n" +
+      "  \"salary\": 100.00" +
+      "}";
+    var response = mockMvc.perform(
+        patch("/users/e0091")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(json))
+      .andExpect(status().isBadRequest())
+      .andReturn()
+      .getResponse();
+    var responseDto = objectMapper.readValue(response.getContentAsString(), ApiResponseDto.class);
+    assertEquals("No such employee", responseDto.getMessage());
+    var employee = employeeWriteRepository.findById("e0091");
+    assertFalse(employee.isPresent());
   }
 
   @Test
