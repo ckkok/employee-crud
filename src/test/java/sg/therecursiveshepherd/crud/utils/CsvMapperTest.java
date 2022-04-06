@@ -19,11 +19,12 @@ class CsvMapperTest {
   @DisplayName("CsvMapper trims leading and trailing spaces from columns")
   void employeeCsvMapper() throws IOException {
     var csvMapper = new ApplicationConfiguration().employeeCsvMapper();
-    var inputStream = new ByteArrayInputStream(getTestInput().getBytes(StandardCharsets.UTF_8));
-    MappingIterator<EmployeeDto> it = csvMapper.readValues(inputStream.readAllBytes());
-    var dtoList = it.readAll();
-    assertFalse(StringUtils.hasText(dtoList.get(0).getLogin()));
-    assertEquals("rwesley", dtoList.get(1).getLogin());
+    try (var inputStream = new ByteArrayInputStream(getTestInput().getBytes(StandardCharsets.UTF_8))) {
+      MappingIterator<EmployeeDto> it = csvMapper.readValues(inputStream.readAllBytes());
+      var dtoList = it.readAll();
+      assertFalse(StringUtils.hasText(dtoList.get(0).getLogin()));
+      assertEquals("rwesley", dtoList.get(1).getLogin());
+    }
   }
 
   private String getTestInput() {

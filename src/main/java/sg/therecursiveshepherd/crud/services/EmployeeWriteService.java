@@ -125,9 +125,10 @@ public class EmployeeWriteService {
   }
 
   private List<EmployeeDto> mapCsvDataToDtos(byte[] csvByteContents) throws IOException {
-    var inputStream = new ByteArrayInputStream(csvByteContents);
-    MappingIterator<EmployeeDto> it = employeeCsvMapper.readValues(inputStream.readAllBytes());
-    return it.readAll();
+    try (var inputStream = new ByteArrayInputStream(csvByteContents)) {
+      MappingIterator<EmployeeDto> it = employeeCsvMapper.readValues(inputStream.readAllBytes());
+      return it.readAll();
+    }
   }
 
   private long batchUpsert(List<EmployeeDto> dtos) {
